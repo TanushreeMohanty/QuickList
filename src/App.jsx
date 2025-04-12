@@ -14,6 +14,7 @@ import TaskForm from './components/TaskForm';
 import TaskList from './components/TaskList';
 import TaskControls from './components/TaskControls';
 import { loadTasks, saveTasks } from './utils/localStorageUtils';
+import LandingPage from './components/LandingPage'; // Import the landing page component
 
 const App = ({ mode, setMode }) => {
   const theme = useTheme();
@@ -24,6 +25,8 @@ const App = ({ mode, setMode }) => {
   const [editId, setEditId] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [notification, setNotification] = useState('');
+
+  const [showLandingPage, setShowLandingPage] = useState(true); // State to toggle landing page
 
   // Filter, Sort, Search
   const [filter, setFilter] = useState('all');
@@ -73,7 +76,6 @@ const App = ({ mode, setMode }) => {
     setNotification('Task Deleted!');
   };
 
-  // Filtering, Sorting, Searching logic
   const getFilteredTasks = () => {
     let filtered = [...tasks];
 
@@ -105,6 +107,11 @@ const App = ({ mode, setMode }) => {
     setMode(prev => (prev === 'light' ? 'dark' : 'light'));
   };
 
+  // Function to handle when landing page is done and show tasks
+  const handleLandingPageDone = () => {
+    setShowLandingPage(false); // Hide landing page after user finishes
+  };
+
   return (
     <Container maxWidth="sm" sx={{ mt: 4, mb: 4 }}>
       {/* Theme Toggle Button */}
@@ -116,51 +123,51 @@ const App = ({ mode, setMode }) => {
         {theme.palette.mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
       </IconButton>
 
-      <Typography variant="h4" align="center" gutterBottom>
-        QuickList
-      </Typography>
+      {/* Conditional rendering for Landing Page */}
+      {showLandingPage ? (
+        <LandingPage onLandingPageDone={handleLandingPageDone} />
+      ) : (
+        <>
+          <Typography variant="h4" align="center" gutterBottom>
+            QuickList
+          </Typography>
 
-      <TaskControls
-        filter={filter}
-        setFilter={setFilter}
-        sortBy={sortBy}
-        setSortBy={setSortBy}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-      />
+          <TaskControls
+            filter={filter}
+            setFilter={setFilter}
+            sortBy={sortBy}
+            setSortBy={setSortBy}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+          />
 
-      <TaskForm
-        taskData={taskData}
-        setTaskData={setTaskData}
-        onSubmit={handleAddOrEdit}
-        isEdit={false}
-      />
-
-      <TaskList
-        tasks={getFilteredTasks()}
-        onToggle={handleToggleComplete}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      />
-
-      <Snackbar
-        open={!!notification}
-        autoHideDuration={3000}
-        onClose={() => setNotification('')}
-        message={notification}
-      />
-
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
-        <Box sx={modalStyle}>
-          <Typography variant="h6" mb={2}>Edit Task</Typography>
           <TaskForm
             taskData={taskData}
             setTaskData={setTaskData}
             onSubmit={handleAddOrEdit}
-            isEdit={true}
+            isEdit={false}
           />
-        </Box>
-      </Modal>
+
+          <TaskList
+            tasks={getFilteredTasks()}
+            onToggle={handleToggleComplete}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+
+          <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
+            <Box sx={modalStyle}>
+              <Typography variant="h6" mb={2}>Edit Task</Typography>
+              <TaskForm
+                taskData={taskData}
+                setTaskData={setTaskData}
+                onSubmit={handleAddOrEdit}
+                isEdit={true}
+              />
+            </Box>
+          </Modal>
+        </>
+      )}
     </Container>
   );
 };
