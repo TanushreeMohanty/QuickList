@@ -170,10 +170,11 @@ const modalStyle = {
   top: '50%',
   left: '50%',
   width: '90%',
-  maxWidth: 500,
+  maxWidth: 800,
   transform: 'translate(-50%, -50%)',
   backgroundColor: 'white',
-  padding: 20,
+  color: 'black',
+  padding: 5,
   borderRadius: 4,
 };
 

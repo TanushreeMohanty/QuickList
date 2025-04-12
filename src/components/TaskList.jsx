@@ -1,6 +1,5 @@
 import React from 'react';
-import { List, ListItem, Typography, Box, Checkbox, IconButton } from '@mui/material';
-import { Delete, Edit } from '@mui/icons-material';
+import { List, ListItem, Typography, Box, LinearProgress } from '@mui/material';
 import TaskItem from './TaskItem';
 
 const TaskList = ({ tasks, onToggle, onEdit, onDelete }) => {
@@ -11,13 +10,25 @@ const TaskList = ({ tasks, onToggle, onEdit, onDelete }) => {
 
   return (
     <>
-      {/* Display progress bar or percentage */}
+      {/* Progress section with label and bar */}
       <Box sx={{ mb: 2 }}>
-        <Typography variant="subtitle1" color="textSecondary">
+        <Typography variant="subtitle1" color="textSecondary" sx={{ mb: 0.5 }}>
           Progress: {completionPercentage}%
         </Typography>
+        <LinearProgress
+          variant="determinate"
+          value={completionPercentage}
+          sx={{
+            height: 10,
+            borderRadius: 5,
+            backgroundColor: theme => theme.palette.grey[300],
+            '& .MuiLinearProgress-bar': {
+              backgroundColor: theme => theme.palette.primary.main,
+            },
+          }}
+        />
       </Box>
-      
+
       <List>
         {tasks.map(task => (
           <TaskItem

@@ -18,6 +18,10 @@ This is a Todo App created using React.js
    - **Completion Percentage**: Display a progress bar or percentage showing how many tasks are completed versus total tasks.
    - **Due Date**: Option to set a due date for tasks (Optional). Use a date picker or input field.
 
+7. **User Experience (UX):**
+   - **Confirmation Dialogs**: Display a confirmation dialog before deleting a task.
+   - **Snackbar Notifications**: Show snackbar notifications for task actions (e.g., task added, task deleted).
+   
 8. **Customizable Themes:**
    - **Dark/Light Mode**: Implement light and dark modes using MUI's `ThemeProvider` and a toggle button.
    - **Custom Theme**: Customize primary, secondary, and background colors using MUI's theme customization.
