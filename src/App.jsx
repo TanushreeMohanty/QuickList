@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Container,
   Typography,
-  Snackbar,
   Modal,
   Box,
   IconButton,
-  useTheme
+  useTheme,
+  Paper
 } from '@mui/material';
 import { Brightness4, Brightness7 } from '@mui/icons-material';
 
@@ -14,7 +13,7 @@ import TaskForm from './components/TaskForm';
 import TaskList from './components/TaskList';
 import TaskControls from './components/TaskControls';
 import { loadTasks, saveTasks } from './utils/localStorageUtils';
-import LandingPage from './components/LandingPage'; // Import the landing page component
+import LandingPage from './components/LandingPage';
 
 const App = ({ mode, setMode }) => {
   const theme = useTheme();
@@ -25,10 +24,8 @@ const App = ({ mode, setMode }) => {
   const [editId, setEditId] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [notification, setNotification] = useState('');
+  const [showLandingPage, setShowLandingPage] = useState(true);
 
-  const [showLandingPage, setShowLandingPage] = useState(true); // State to toggle landing page
-
-  // Filter, Sort, Search
   const [filter, setFilter] = useState('all');
   const [sortBy, setSortBy] = useState('title');
   const [searchQuery, setSearchQuery] = useState('');
@@ -79,13 +76,9 @@ const App = ({ mode, setMode }) => {
   const getFilteredTasks = () => {
     let filtered = [...tasks];
 
-    if (filter === 'active') {
-      filtered = filtered.filter(task => !task.completed);
-    } else if (filter === 'completed') {
-      filtered = filtered.filter(task => task.completed);
-    } else if (filter === 'priority') {
-      filtered = filtered.filter(task => task.priority === 'high');
-    }
+    if (filter === 'active') filtered = filtered.filter(task => !task.completed);
+    else if (filter === 'completed') filtered = filtered.filter(task => task.completed);
+    else if (filter === 'priority') filtered = filtered.filter(task => task.priority === 'high');
 
     if (searchQuery.trim()) {
       filtered = filtered.filter(task =>
@@ -107,27 +100,50 @@ const App = ({ mode, setMode }) => {
     setMode(prev => (prev === 'light' ? 'dark' : 'light'));
   };
 
-  // Function to handle when landing page is done and show tasks
-  const handleLandingPageDone = () => {
-    setShowLandingPage(false); // Hide landing page after user finishes
-  };
+  const handleLandingPageDone = () => setShowLandingPage(false);
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 4, mb: 4 }}>
-      {/* Theme Toggle Button */}
+    <Box
+      sx={{
+        width: '100%',
+        minHeight: '100vh',
+        backgroundColor: theme.palette.background.default,
+        padding: { xs: 2, md: 4 },
+        position: 'relative',
+      }}
+    >
+      {/* Floating Theme Toggle */}
       <IconButton
-        sx={{ position: 'absolute', top: 16, right: 16 }}
+        sx={{
+          position: 'fixed',
+          top: 20,
+          right: 20,
+          zIndex: 10,
+          backgroundColor: theme.palette.background.paper,
+          border: `1px solid ${theme.palette.divider}`,
+          '&:hover': {
+            backgroundColor: theme.palette.action.hover,
+          },
+        }}
         onClick={toggleTheme}
-        color="inherit"
       >
         {theme.palette.mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
       </IconButton>
 
-      {/* Conditional rendering for Landing Page */}
       {showLandingPage ? (
         <LandingPage onLandingPageDone={handleLandingPageDone} />
       ) : (
-        <>
+        <Paper
+          elevation={3}
+          sx={{
+            maxWidth: 800,
+            mx: 'auto',
+            padding: { xs: 3, md: 5 },
+            borderRadius: 4,
+            mt: 6,
+            backgroundColor: theme.palette.background.paper,
+          }}
+        >
           <Typography variant="h4" align="center" gutterBottom>
             QuickList
           </Typography>
@@ -155,8 +171,9 @@ const App = ({ mode, setMode }) => {
             onDelete={handleDelete}
           />
 
+          {/* Edit Modal */}
           <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
-            <Box sx={modalStyle}>
+            <Box sx={modalStyle(theme)}>
               <Typography variant="h6" mb={2}>Edit Task</Typography>
               <TaskForm
                 taskData={taskData}
@@ -166,23 +183,25 @@ const App = ({ mode, setMode }) => {
               />
             </Box>
           </Modal>
-        </>
+        </Paper>
       )}
-    </Container>
+    </Box>
   );
 };
 
-const modalStyle = {
+// 🧩 Modal Styling Function
+const modalStyle = (theme) => ({
   position: 'absolute',
   top: '50%',
   left: '50%',
   width: '90%',
-  maxWidth: 800,
+  maxWidth: 600,
   transform: 'translate(-50%, -50%)',
-  backgroundColor: 'white',
-  color: 'black',
-  padding: 5,
+  backgroundColor: theme.palette.background.paper,
+  color: theme.palette.text.primary,
+  padding: 4,
   borderRadius: 4,
-};
+  boxShadow: 24,
+});
 
 export default App;
