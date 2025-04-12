@@ -1,96 +1,112 @@
 import React, { useState, useEffect } from 'react';
-import { Container, TextField, Button, Checkbox, List, ListItem, ListItemText, IconButton, Box, Typography, Snackbar } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { Container, Typography, Snackbar, Modal, Box } from '@mui/material';
+import TaskForm from './components/TaskForm';
+import TaskList from './components/TaskList';
+import { loadTasks, saveTasks } from './utils/localStorageUtils';
 
 const App = () => {
-  const [task, setTask] = useState('');
   const [tasks, setTasks] = useState([]);
+  const [taskData, setTaskData] = useState({ title: '', description: '', priority: 'low' });
+  const [editMode, setEditMode] = useState(false);
+  const [editId, setEditId] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
   const [notification, setNotification] = useState('');
 
   useEffect(() => {
-    // Load tasks from localStorage
-    const savedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
-    setTasks(savedTasks);
+    setTasks(loadTasks());
   }, []);
 
   useEffect(() => {
-    // Save tasks to localStorage
-    localStorage.setItem('tasks', JSON.stringify(tasks));
+    saveTasks(tasks);
   }, [tasks]);
 
-  const addTask = () => {
-    if (task.trim()) {
-      const newTask = { id: Date.now(), text: task, completed: false };
+  const handleAddOrEdit = () => {
+    if (!taskData.title || !taskData.description) return;
+
+    if (editMode) {
+      const updated = tasks.map(t => t.id === editId ? { ...t, ...taskData } : t);
+      setTasks(updated);
+      setNotification('Task Edited!');
+    } else {
+      const newTask = { id: Date.now(), ...taskData, completed: false };
       setTasks([...tasks, newTask]);
-      setTask('');
       setNotification('Task Added!');
     }
+
+    setTaskData({ title: '', description: '', priority: 'low' });
+    setEditMode(false);
+    setEditId(null);
+    setModalOpen(false);
   };
 
-  const toggleTaskCompletion = (id) => {
-    const updatedTasks = tasks.map((t) => 
-      t.id === id ? { ...t, completed: !t.completed } : t
-    );
-    setTasks(updatedTasks);
-    setNotification('Task Updated!');
+  const handleEdit = (task) => {
+    setTaskData(task);
+    setEditMode(true);
+    setEditId(task.id);
+    setModalOpen(true);
   };
 
-  const deleteTask = (id) => {
-    const updatedTasks = tasks.filter((task) => task.id !== id);
-    setTasks(updatedTasks);
+  const handleToggleComplete = (id) => {
+    setTasks(tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
+  };
+
+  const handleDelete = (id) => {
+    setTasks(tasks.filter(t => t.id !== id));
     setNotification('Task Deleted!');
   };
 
   return (
-    <Container maxWidth="sm" sx={{ padding: 2 }}>
+    <Container maxWidth="sm" sx={{ mt: 4 }}>
       <Typography variant="h4" align="center" gutterBottom>
         QuickList
       </Typography>
 
-      <Box mb={2}>
-        <TextField
-          label="Enter a task"
-          variant="outlined"
-          fullWidth
-          value={task}
-          onChange={(e) => setTask(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && addTask()}
-        />
-      </Box>
+      <TaskForm
+        taskData={taskData}
+        setTaskData={setTaskData}
+        onSubmit={handleAddOrEdit}
+        isEdit={false}
+      />
 
-      <Button variant="contained" onClick={addTask} sx={{ mb: 2 }} fullWidth>
-        Add Task
-      </Button>
-
-      <List>
-        {tasks.map((task) => (
-          <ListItem key={task.id} sx={{ display: 'flex', alignItems: 'center' }}>
-            <Checkbox
-              checked={task.completed}
-              onChange={() => toggleTaskCompletion(task.id)}
-              icon={<CheckCircleIcon />}
-              checkedIcon={<CheckCircleIcon sx={{ color: 'green' }} />}
-            />
-            <ListItemText
-              primary={task.text}
-              sx={{ textDecoration: task.completed ? 'line-through' : 'none' }}
-            />
-            <IconButton edge="end" onClick={() => deleteTask(task.id)}>
-              <DeleteIcon />
-            </IconButton>
-          </ListItem>
-        ))}
-      </List>
+      <TaskList
+        tasks={tasks}
+        onToggle={handleToggleComplete}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
 
       <Snackbar
-        open={notification.length > 0}
+        open={!!notification}
         autoHideDuration={3000}
         onClose={() => setNotification('')}
         message={notification}
       />
+
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
+        <Box sx={modalStyle}>
+          <Typography variant="h6" mb={2}>Edit Task</Typography>
+          <TaskForm
+            taskData={taskData}
+            setTaskData={setTaskData}
+            onSubmit={handleAddOrEdit}
+            isEdit={true}
+          />
+        </Box>
+      </Modal>
     </Container>
   );
+};
+
+const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  width: '90%',
+  maxWidth: 500,
+  transform: 'translate(-50%, -50%)',
+  backgroundColor: 'white',
+  padding: 20,
+  borderRadius: 4,
 };
 
 export default App;
