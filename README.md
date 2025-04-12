@@ -17,3 +17,7 @@ This is a Todo App created using React.js
 6. **Task Management Features:**
    - **Completion Percentage**: Display a progress bar or percentage showing how many tasks are completed versus total tasks.
    - **Due Date**: Option to set a due date for tasks (Optional). Use a date picker or input field.
+
+8. **Customizable Themes:**
+   - **Dark/Light Mode**: Implement light and dark modes using MUI's `ThemeProvider` and a toggle button.
+   - **Custom Theme**: Customize primary, secondary, and background colors using MUI's theme customization.

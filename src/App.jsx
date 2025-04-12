@@ -4,15 +4,20 @@ import {
   Typography,
   Snackbar,
   Modal,
-  Box
+  Box,
+  IconButton,
+  useTheme
 } from '@mui/material';
+import { Brightness4, Brightness7 } from '@mui/icons-material';
 
 import TaskForm from './components/TaskForm';
 import TaskList from './components/TaskList';
 import TaskControls from './components/TaskControls';
 import { loadTasks, saveTasks } from './utils/localStorageUtils';
 
-const App = () => {
+const App = ({ mode, setMode }) => {
+  const theme = useTheme();
+
   const [tasks, setTasks] = useState([]);
   const [taskData, setTaskData] = useState({ title: '', description: '', priority: 'low' });
   const [editMode, setEditMode] = useState(false);
@@ -20,7 +25,7 @@ const App = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [notification, setNotification] = useState('');
 
-  // New: filter/sort/search
+  // Filter, Sort, Search
   const [filter, setFilter] = useState('all');
   const [sortBy, setSortBy] = useState('title');
   const [searchQuery, setSearchQuery] = useState('');
@@ -72,7 +77,6 @@ const App = () => {
   const getFilteredTasks = () => {
     let filtered = [...tasks];
 
-    // Filter
     if (filter === 'active') {
       filtered = filtered.filter(task => !task.completed);
     } else if (filter === 'completed') {
@@ -81,14 +85,12 @@ const App = () => {
       filtered = filtered.filter(task => task.priority === 'high');
     }
 
-    // Search
     if (searchQuery.trim()) {
       filtered = filtered.filter(task =>
         task.title.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
-    // Sort
     if (sortBy === 'title') {
       filtered.sort((a, b) => a.title.localeCompare(b.title));
     } else if (sortBy === 'priority') {
@@ -99,13 +101,25 @@ const App = () => {
     return filtered;
   };
 
+  const toggleTheme = () => {
+    setMode(prev => (prev === 'light' ? 'dark' : 'light'));
+  };
+
   return (
     <Container maxWidth="sm" sx={{ mt: 4, mb: 4 }}>
+      {/* Theme Toggle Button */}
+      <IconButton
+        sx={{ position: 'absolute', top: 16, right: 16 }}
+        onClick={toggleTheme}
+        color="inherit"
+      >
+        {theme.palette.mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
+      </IconButton>
+
       <Typography variant="h4" align="center" gutterBottom>
         QuickList
       </Typography>
 
-      {/* New: Controls for Filter / Sort / Search */}
       <TaskControls
         filter={filter}
         setFilter={setFilter}
