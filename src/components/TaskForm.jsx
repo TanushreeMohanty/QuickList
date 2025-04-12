@@ -1,41 +1,58 @@
 import React from 'react';
-import { Box, Button, TextField, FormControl, InputLabel, Select, MenuItem, TextareaAutosize } from '@mui/material';
+import {
+  TextField,
+  Button,
+  MenuItem,
+  Stack
+} from '@mui/material';
 
 const TaskForm = ({ taskData, setTaskData, onSubmit, isEdit }) => {
   const handleChange = (e) => {
-    setTaskData({ ...taskData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setTaskData(prev => ({ ...prev, [name]: value }));
   };
 
   return (
-    <Box>
+    <Stack spacing={2} mb={3}>
       <TextField
-        label="Task Title"
+        label="Title"
         name="title"
-        fullWidth
-        variant="outlined"
         value={taskData.title}
         onChange={handleChange}
+        fullWidth
       />
-      <TextareaAutosize
+      <TextField
+        label="Description"
         name="description"
-        minRows={3}
-        placeholder="Task Description"
         value={taskData.description}
         onChange={handleChange}
-        style={{ width: '100%', marginTop: '1rem', padding: '8px' }}
+        fullWidth
       />
-      <FormControl fullWidth sx={{ mt: 2 }}>
-        <InputLabel>Priority</InputLabel>
-        <Select name="priority" value={taskData.priority} onChange={handleChange}>
-          <MenuItem value="low">Low</MenuItem>
-          <MenuItem value="medium">Medium</MenuItem>
-          <MenuItem value="high">High</MenuItem>
-        </Select>
-      </FormControl>
-      <Button variant="contained" fullWidth sx={{ mt: 2 }} onClick={onSubmit}>
-        {isEdit ? 'Save Changes' : 'Add Task'}
+      <TextField
+        select
+        label="Priority"
+        name="priority"
+        value={taskData.priority}
+        onChange={handleChange}
+        fullWidth
+      >
+        <MenuItem value="low">Low</MenuItem>
+        <MenuItem value="medium">Medium</MenuItem>
+        <MenuItem value="high">High</MenuItem>
+      </TextField>
+      <TextField
+        type="date"
+        label="Due Date"
+        name="dueDate"
+        value={taskData.dueDate || ''}
+        onChange={handleChange}
+        InputLabelProps={{ shrink: true }}
+        fullWidth
+      />
+      <Button variant="contained" onClick={onSubmit}>
+        {isEdit ? 'Update Task' : 'Add Task'}
       </Button>
-    </Box>
+    </Stack>
   );
 };
 

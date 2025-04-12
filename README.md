@@ -13,3 +13,7 @@ This is a Todo App created using React.js
    - **Filter Tasks**: Filter tasks by "All", "Active", "Completed", or "Priority".
    - **Sort Tasks**: Sort tasks by title or priority.
    - **Search Bar**: A search input field to filter tasks by their titles.
+
+6. **Task Management Features:**
+   - **Completion Percentage**: Display a progress bar or percentage showing how many tasks are completed versus total tasks.
+   - **Due Date**: Option to set a due date for tasks (Optional). Use a date picker or input field.
