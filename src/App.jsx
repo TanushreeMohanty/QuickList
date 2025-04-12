@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, Snackbar, Modal, Box } from '@mui/material';
+import {
+  Container,
+  Typography,
+  Snackbar,
+  Modal,
+  Box
+} from '@mui/material';
+
 import TaskForm from './components/TaskForm';
 import TaskList from './components/TaskList';
+import TaskControls from './components/TaskControls';
 import { loadTasks, saveTasks } from './utils/localStorageUtils';
 
 const App = () => {
@@ -11,6 +19,11 @@ const App = () => {
   const [editId, setEditId] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [notification, setNotification] = useState('');
+
+  // New: filter/sort/search
+  const [filter, setFilter] = useState('all');
+  const [sortBy, setSortBy] = useState('title');
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     setTasks(loadTasks());
@@ -55,11 +68,52 @@ const App = () => {
     setNotification('Task Deleted!');
   };
 
+  // Filtering, Sorting, Searching logic
+  const getFilteredTasks = () => {
+    let filtered = [...tasks];
+
+    // Filter
+    if (filter === 'active') {
+      filtered = filtered.filter(task => !task.completed);
+    } else if (filter === 'completed') {
+      filtered = filtered.filter(task => task.completed);
+    } else if (filter === 'priority') {
+      filtered = filtered.filter(task => task.priority === 'high');
+    }
+
+    // Search
+    if (searchQuery.trim()) {
+      filtered = filtered.filter(task =>
+        task.title.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    // Sort
+    if (sortBy === 'title') {
+      filtered.sort((a, b) => a.title.localeCompare(b.title));
+    } else if (sortBy === 'priority') {
+      const order = { high: 0, medium: 1, low: 2 };
+      filtered.sort((a, b) => order[a.priority] - order[b.priority]);
+    }
+
+    return filtered;
+  };
+
   return (
-    <Container maxWidth="sm" sx={{ mt: 4 }}>
+    <Container maxWidth="sm" sx={{ mt: 4, mb: 4 }}>
       <Typography variant="h4" align="center" gutterBottom>
         QuickList
       </Typography>
+
+      {/* New: Controls for Filter / Sort / Search */}
+      <TaskControls
+        filter={filter}
+        setFilter={setFilter}
+        sortBy={sortBy}
+        setSortBy={setSortBy}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+      />
 
       <TaskForm
         taskData={taskData}
@@ -69,7 +123,7 @@ const App = () => {
       />
 
       <TaskList
-        tasks={tasks}
+        tasks={getFilteredTasks()}
         onToggle={handleToggleComplete}
         onEdit={handleEdit}
         onDelete={handleDelete}

@@ -8,3 +8,8 @@ This is a Todo App created using React.js
    - **Delete Task**: Option to delete a task with confirmation.
    - **Mark Task as Completed**: A checkbox to mark a task as completed and visually differentiate it (strikethrough or color change).
    - **Task Priority**: Ability to set priority (low, medium, high) using a dropdown or color-coded indicators.
+
+4. **Task Filtering and Sorting:**
+   - **Filter Tasks**: Filter tasks by "All", "Active", "Completed", or "Priority".
+   - **Sort Tasks**: Sort tasks by title or priority.
+   - **Search Bar**: A search input field to filter tasks by their titles.
