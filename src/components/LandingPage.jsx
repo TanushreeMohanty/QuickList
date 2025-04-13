@@ -16,6 +16,7 @@ import {
     FormatListBulleted,
     AutoAwesome
   } from '@mui/icons-material';
+import logo from '../assets/logo.png'; // Adjust the path as necessary
 const LandingPage = ({ onLandingPageDone }) => {
 
     const features = [
@@ -30,10 +31,8 @@ const LandingPage = ({ onLandingPageDone }) => {
         { name: 'Search Tasks', icon: <Search /> },
         { name: 'Filter Tasks', icon: <FilterList /> },
         { name: 'Sort Tasks', icon: <Sort /> },
-        { name: 'Snackbar Alerts', icon: <Notifications /> },
         { name: 'Dark Mode', icon: <DarkMode /> },
         { name: 'Light Mode', icon: <LightMode /> },
-        { name: 'Custom Theme', icon: <AutoAwesome /> }
       ];
 
   return (
@@ -49,9 +48,14 @@ const LandingPage = ({ onLandingPageDone }) => {
         padding: 2,
       }}
     >
-      <Typography variant="h3" gutterBottom>
-        Welcome to QuickList
-      </Typography>
+<Typography variant="h1" gutterBottom>
+  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+    <img src={logo} alt="Logo" className="logo-landing"       style={{ height: '50px', width: 'auto', margin: 0, padding: 0, display: 'inline-block' }} 
+ />
+    QuickList
+  </span>
+</Typography>
+
       <Typography variant="h5" paragraph>
         Manage your tasks efficiently with QuickList. Start adding tasks and organize your life.
       </Typography>

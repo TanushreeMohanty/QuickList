@@ -14,6 +14,7 @@ import TaskList from './components/TaskList';
 import TaskControls from './components/TaskControls';
 import { loadTasks, saveTasks } from './utils/localStorageUtils';
 import LandingPage from './components/LandingPage';
+import logo from './assets/logo.png'; // Adjust the path as necessary
 
 const App = ({ mode, setMode }) => {
   const theme = useTheme();
@@ -144,9 +145,14 @@ const App = ({ mode, setMode }) => {
             backgroundColor: theme.palette.background.paper,
           }}
         >
-          <Typography variant="h4" align="center" gutterBottom>
-            QuickList
-          </Typography>
+<Typography variant="h4" align="center" gutterBottom>
+  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+    <img src={logo} alt="Logo" className="logo-landing"       style={{ height: '40px', width: 'auto', margin: 0, padding: 0, display: 'inline-block' }} 
+ />
+    QuickList
+  </span>
+</Typography>
+
 
           <TaskControls
             filter={filter}
